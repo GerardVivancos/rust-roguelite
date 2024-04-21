@@ -62,12 +62,13 @@ impl GameState for State {
          ctx.cls();
 
          self.resources.insert(ctx.key);
-         self.systems.execute(&mut self.ecs, &mut self.resources)
+         self.systems.execute(&mut self.ecs, &mut self.resources);
+         render_draw_buffer(ctx).expect("Render error");
     }
 }
 
 fn main() -> BError {
-    let context = BTermBuilder::simple80x50()
+    let context = BTermBuilder::new()
         .with_title("Dungeon Crawler")
         .with_fps_cap(60.0)
         .with_dimensions(DISPLAY_WIDTH, DISPLAY_HEIGHT)
