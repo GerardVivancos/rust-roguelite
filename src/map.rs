@@ -2,9 +2,16 @@ use crate::prelude::*;
 const NUM_TILES: usize = (SCREEN_WIDTH * SCREEN_HEIGHT) as usize;
 
 #[derive(Copy, Clone, PartialEq)]
+pub enum FloorType {
+    Horizontal,
+    Vertical,
+    Room
+}
+
+#[derive(Copy, Clone, PartialEq)]
 pub enum TileType {
     Wall,
-    Floor,
+    Floor(FloorType),
 }
 
 pub struct Map {
@@ -14,7 +21,7 @@ pub struct Map {
 impl Map {
     pub fn new() -> Self {
         Self {
-            tiles: vec![TileType::Floor; NUM_TILES],
+            tiles: vec![TileType::Floor(FloorType::Room); NUM_TILES],
         }
     }
 
@@ -24,8 +31,10 @@ impl Map {
     }
 
     pub fn can_enter_tile(&self, point: Point) -> bool {
-        self.in_bounds(point) &&
-        self.tiles[map_idx(point.x, point.y)] == TileType::Floor
+        if let TileType::Floor(_) = self.tiles[map_idx(point.x, point.y)] {
+            return self.in_bounds(point)
+        };
+        false
     }
 
     pub fn try_idx(&self, point: Point) -> Option<usize> {

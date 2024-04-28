@@ -14,7 +14,7 @@ pub fn map_render(
             if map.in_bounds(pt) {
                 let idx = map_idx(x, y);
                 let glyph = match map.tiles[idx] {
-                    TileType::Floor => to_cp437('.'),
+                    TileType::Floor(f) => floor_render(f),
                     TileType::Wall => to_cp437('#'),
                 };
                 draw_batch.set(pt - offset, ColorPair::new(WHITE, BLACK), glyph);
@@ -22,4 +22,17 @@ pub fn map_render(
         }
     }
     draw_batch.submit(0).expect("Batch error");
+}
+
+fn floor_render(f: FloorType) -> FontCharType {
+    if !DEBUG_FLOOR_TILES {
+        return to_cp437('.');
+    }
+
+
+    match f {
+        FloorType::Room =>       to_cp437('.'),
+        FloorType::Vertical =>   to_cp437('V'),
+        FloorType::Horizontal => to_cp437('H'),
+    }
 }
